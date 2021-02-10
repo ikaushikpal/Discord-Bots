@@ -1,19 +1,21 @@
 import discord
 import os
 import keep_me_alive
+from my_logger import my_logger
+
 
 client = discord.Client()
-
+logger = my_logger()
 
 @client.event
 async def on_ready():
-    print(f"logged as {client.user} and bot is online")
+    logger.debug(f"logged as {client.user} and bot is online")
 
 
 def calculate(s):
     tempRes = list(s.split(' '))
     if len(tempRes) != 3:
-        return "Could not understood "
+        return "Could not understood"
 
     method, num1, num2 = tempRes
     res = 0
@@ -38,7 +40,7 @@ def calculate(s):
         return str(res)
 
     else:
-        return "Could not understood "
+        return "Could not understood"
 
     x = f"{res:0.2f}"
     return f"Result = {str(x)}"
@@ -52,10 +54,11 @@ def print_help():
 @client.event
 async def on_message(message):
     if message.author == client.user: # for bot says
+        logger.info(f"Bot wrote {message.content}")
         return
 
     if message.content.startswith("$"):
-        print(message.author, "said",message.content)
+        logger.debug(f"{message.author} said {message.content}")
         if 'help' in message.content:
             await message.channel.send(print_help())
             return
@@ -65,5 +68,6 @@ async def on_message(message):
 
 
 if __name__ == "__main__":
-    keep_me_alive.main()
+    logger.debug("PROGRAM STARTED")
+    keep_me_alive.alive()
     client.run(os.getenv('TOKEN'))
